@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英単語カード一覧</title>
+<style>
+:root{
+  --bg:#f5f3ef;--card:#fff;--accent:#4a6fa5;--aclt:#e8f0fb;
+  --ink:#1e1e1e;--muted:#7a7972;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic",-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px}
+h1{font-size:20px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+.list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px}
+.item{display:flex;align-items:center;background:var(--card);border-radius:14px;
+  padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.07);
+  text-decoration:none;color:var(--ink);gap:14px;transition:transform .15s}
+.item:active{transform:scale(.98)}
+.icon{font-size:22px;flex-shrink:0}
+.info{flex:1}
+.date{font-size:13px;font-weight:700;margin-bottom:3px}
+.words{font-size:11.5px;color:var(--muted);line-height:1.5}
+.arrow{font-size:18px;color:var(--accent);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<h1>📘 英単語カード一覧</h1>
+<div class="sub">タップして学習開始</div>
+
+<div class="list">
+
+  <a class="item" href="vocab-20260622.html">
+    <div class="icon">📗</div>
+    <div class="info">
+      <div class="date">2026年6月22日</div>
+      <div class="words">curtail / demise / upheaval / debilitating / connotation<br>solace / remnant / resurrection / inadvertent / impede</div>
+    </div>
+    <div class="arrow">›</div>
+  </a>
+
+  <!-- 以下に新しい日付を追加していく -->
+
+</div>
+</body>
+</html>
