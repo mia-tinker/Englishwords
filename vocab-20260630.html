@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英単語カード 2026-06-30</title>
+<style>
+:root{
+  --bg:#f5f3ef;--card:#fff;--ink:#1e1e1e;
+  --accent:#4a6fa5;--aclt:#c8d8f0;
+  --green:#3d7a55;--red:#a83232;--muted:#7a7972;--tag:#e8f0fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic",-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:22px 16px 60px}
+h1{font-size:18px;font-weight:800;margin:4px 0 16px;display:flex;align-items:center;gap:8px}
+.badge{font-size:11px;color:var(--accent);background:var(--tag);padding:3px 10px;border-radius:20px;font-weight:700}
+.tabs{display:flex;background:var(--card);padding:4px;border-radius:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:18px;gap:4px}
+.tab{border:none;background:transparent;padding:9px 20px;font-size:13.5px;
+  font-weight:700;color:var(--muted);border-radius:9px;cursor:pointer;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff}
+.view{width:100%;max-width:440px;display:none}
+.view.active{display:block}
+
+.auto-row{display:flex;align-items:center;justify-content:center;
+  gap:6px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.auto-row input{accent-color:var(--accent)}
+.prog{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:600}
+.card-wrap{perspective:1200px;width:100%;height:280px;margin-bottom:14px;cursor:pointer}
+.card{position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1)}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 22px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.front{background:var(--card);border:1px solid #ddd9d0}
+.back{background:var(--accent);color:#fff;transform:rotateY(180deg)}
+.spk{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;
+  border:none;background:rgba(0,0,0,.07);color:var(--accent);font-size:15px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.back .spk{background:rgba(255,255,255,.22);color:#fff}
+.spk.on{animation:pulse .6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.ptag{font-size:11px;background:var(--tag);color:var(--accent);
+  padding:3px 10px;border-radius:20px;margin-bottom:8px;font-weight:600}
+.back .ptag{background:rgba(255,255,255,.2);color:#fff}
+.word-big{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px;line-height:1.25}
+.antonym{font-size:11px;color:var(--muted);background:#f0ece4;
+  padding:3px 10px;border-radius:20px;margin-bottom:4px}
+.components{font-size:11px;color:var(--muted);line-height:1.6;margin-top:4px}
+.meaning-big{font-size:17px;font-weight:800;margin-bottom:6px;line-height:1.3}
+.sub-meaning{font-size:11.5px;opacity:.88;margin-bottom:7px;line-height:1.5;font-style:italic}
+.ex-text{font-size:12.5px;opacity:.94;line-height:1.65;margin-bottom:4px}
+.tr-text{font-size:11.5px;opacity:.78;line-height:1.55}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px}
+.nav-row{display:flex;gap:10px;margin-bottom:10px}
+.nbtn{flex:1;padding:13px 0;border-radius:12px;border:none;font-size:14px;
+  font-weight:700;cursor:pointer;background:var(--card);color:var(--ink);
+  box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.nbtn.p{background:var(--accent);color:#fff}
+.sbtn{width:100%;padding:10px 0;border-radius:12px;border:1px solid var(--aclt);
+  background:transparent;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer}
+
+.qcard{background:var(--card);border-radius:16px;padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px}
+.qprog{font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:600}
+.qmean{font-size:13px;font-weight:700;color:var(--accent);background:var(--tag);
+  padding:6px 12px;border-radius:10px;margin-bottom:10px;line-height:1.6}
+.qsent{font-size:15px;line-height:1.8;margin-bottom:13px}
+.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--accent);
+  font-weight:700;color:var(--accent);text-align:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.obtn{padding:10px 6px;border-radius:10px;border:1.5px solid #ddd9d0;
+  background:#fffdfa;font-size:12px;cursor:pointer;color:var(--ink);
+  font-family:inherit;line-height:1.3}
+.obtn.ok{background:var(--green);border-color:var(--green);color:#fff}
+.obtn.ng{background:var(--red);border-color:var(--red);color:#fff}
+.obtn:disabled{cursor:default}
+.fb{margin-top:11px;font-size:13px;font-weight:700;min-height:18px}
+.fb.ok{color:var(--green)}.fb.ng{color:var(--red)}
+.qtr{font-size:12px;color:var(--muted);margin-top:6px}
+.qspk{margin-top:9px;padding:7px 14px;border-radius:10px;border:none;
+  background:var(--aclt);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;display:none}
+.score-box{text-align:center;background:var(--card);border-radius:18px;
+  padding:34px 20px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.score-big{font-size:50px;font-weight:900;color:var(--accent);letter-spacing:-.02em;margin:10px 0}
+.rbtn{margin-top:20px;padding:12px 30px;border-radius:12px;border:none;
+  background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<h1>📘 2026-06-30 <span class="badge">8語</span></h1>
+
+<div class="tabs">
+  <button class="tab active" data-view="flash">カード学習</button>
+  <button class="tab" data-view="quiz">穴埋めテスト</button>
+</div>
+
+<div class="view active" id="flashView">
+  <label class="auto-row">
+    <input type="checkbox" id="autoSpeak"> 自動発音
+  </label>
+  <div class="prog" id="prog">1 / 8</div>
+  <div class="card-wrap">
+    <div class="card" id="card">
+      <div class="face front">
+        <button class="spk" id="spkF">🔊</button>
+        <div class="ptag"      id="fPos"></div>
+        <div class="word-big"  id="fWord"></div>
+        <div class="antonym"   id="fAnt"></div>
+        <div class="components" id="fComp"></div>
+      </div>
+      <div class="face back">
+        <button class="spk" id="spkB">🔊</button>
+        <div class="ptag"        id="bPos"></div>
+        <div class="meaning-big" id="bMean"></div>
+        <div class="sub-meaning" id="bSub"></div>
+        <div class="ex-text"     id="bEx"></div>
+        <div class="tr-text"     id="bTr"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">タップして意味を表示 / 🔊で発音</div>
+  <div class="nav-row">
+    <button class="nbtn"   id="prevBtn">← 前へ</button>
+    <button class="nbtn p" id="nextBtn">次へ →</button>
+  </div>
+  <button class="sbtn" id="shuffleBtn">🔀 シャッフル</button>
+</div>
+
+<div class="view" id="quizView">
+  <div class="qcard" id="qcard">
+    <div class="qprog" id="qprog"></div>
+    <div class="qmean" id="qmean"></div>
+    <div class="qsent" id="qsent"></div>
+    <div class="opts"  id="opts"></div>
+    <div class="fb"    id="fb"></div>
+    <button class="qspk" id="qspk">🔊 発音を聞く</button>
+  </div>
+  <button class="nbtn p" id="qnext" style="width:100%;display:none">次の問題 →</button>
+  <div class="score-box" id="scoreBox" style="display:none">
+    <div style="font-size:15px;color:var(--muted)">テスト結果</div>
+    <div class="score-big" id="scoreNum"></div>
+    <div style="font-size:13px;color:var(--muted)" id="scoreCmt"></div>
+    <button class="rbtn" id="restartBtn">もう一度挑戦</button>
+  </div>
+</div>
+
+<script>
+const V = [
+  {
+    word: "traditional centrist leadership",
+    pos: "名詞句", meaning: "伝統的な中道派の指導部",
+    antonym: "対語：radicals（急進派）",
+    comp: "traditional＝伝統的な / centrist＝中道派の / leadership＝指導部",
+    sub: "",
+    ex: "The party is divided between the traditional centrist leadership and younger progressives.",
+    tr: "その政党は、伝統的な中道派の指導部と若い進歩派に分かれている。"
+  },
+  {
+    word: "wealthy donors",
+    pos: "名詞句", meaning: "裕福な献金者",
+    antonym: "対語：poor（貧しい）",
+    comp: "wealthy＝裕福な / donor＝寄付者・献金者",
+    sub: "政治では「選挙資金を提供する人」を指す",
+    ex: "The campaign received support from several wealthy donors.",
+    tr: "その選挙運動は数人の裕福な献金者から支援を受けた。"
+  },
+  {
+    word: "embrace",
+    pos: "動詞", meaning: "受け入れる、積極的に採用する",
+    antonym: "対語：reject（拒否する）",
+    comp: "",
+    sub: "①受け入れる　②積極的に採用する　③抱きしめる",
+    ex: "Many young voters embrace progressive policies.",
+    tr: "多くの若者は進歩的な政策を積極的に受け入れている。"
+  },
+  {
+    word: "abolishing",
+    pos: "動詞（abolishの動名詞）", meaning: "廃止すること",
+    antonym: "対語：establish（設立する）",
+    comp: "",
+    sub: "法律・制度・税金などを「なくす」ときに使う",
+    ex: "Some politicians support abolishing the death penalty.",
+    tr: "死刑制度の廃止を支持する政治家もいる。"
+  },
+  {
+    word: "implementing",
+    pos: "動詞（implementの現在分詞）", meaning: "実施する、導入する",
+    antonym: "対語：abolishing（廃止する）",
+    comp: "",
+    sub: "make a plan → implement the plan（計画を立てる→実際に行う）",
+    ex: "The government is implementing a new education policy.",
+    tr: "政府は新しい教育政策を実施しています。"
+  },
+  {
+    word: "legislation",
+    pos: "名詞", meaning: "法律、立法、法律制定",
+    antonym: "対語：lawlessness（無法）",
+    comp: "",
+    sub: "law＝個々の法律 / legislation＝法律全体または法律を作ること",
+    ex: "The new legislation protects children's privacy.",
+    tr: "その新しい法律は子どものプライバシーを守ります。"
+  },
+  {
+    word: "adequately",
+    pos: "副詞", meaning: "十分に、適切に",
+    antonym: "対語：inadequately（不十分に）",
+    comp: "adequate（十分な）の副詞形",
+    sub: "",
+    ex: "The problem was not adequately explained.",
+    tr: "その問題は十分に説明されませんでした。"
+  },
+  {
+    word: "intervene",
+    pos: "動詞", meaning: "介入する、仲裁する",
+    antonym: "対語：ignore（放置する）",
+    comp: "",
+    sub: "",
+    ex: "The police intervened to stop the fight.",
+    tr: "警察はけんかを止めるために介入しました。"
+  },
+];
+
+/* ===== Speech ===== */
+let voices=[];
+function loadV(){if(window.speechSynthesis)voices=window.speechSynthesis.getVoices();}
+if('speechSynthesis'in window){loadV();window.speechSynthesis.onvoiceschanged=loadV;}
+function speak(text,btn){
+  if(!('speechSynthesis'in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=0.88;
+  const v=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang?.startsWith('en'));
+  if(v)u.voice=v;
+  if(btn){btn.classList.add('on');u.onend=u.onerror=()=>btn.classList.remove('on');}
+  window.speechSynthesis.speak(u);
+}
+
+/* ===== Flashcard ===== */
+let order=V.map((_,i)=>i),idx=0;
+const cardEl=document.getElementById('card');
+
+function renderCard(){
+  const it=V[order[idx]];
+  cardEl.classList.remove('flipped');
+  document.getElementById('fPos').textContent=it.pos;
+  document.getElementById('fWord').textContent=it.word;
+  const antEl=document.getElementById('fAnt');
+  antEl.textContent=it.antonym; antEl.style.display=it.antonym?'inline-block':'none';
+  const compEl=document.getElementById('fComp');
+  compEl.textContent=it.comp; compEl.style.display=it.comp?'block':'none';
+  document.getElementById('bPos').textContent=it.pos;
+  document.getElementById('bMean').textContent=it.meaning;
+  const subEl=document.getElementById('bSub');
+  subEl.textContent=it.sub; subEl.style.display=it.sub?'block':'none';
+  document.getElementById('bEx').textContent=it.ex;
+  document.getElementById('bTr').textContent=it.tr;
+  document.getElementById('prog').textContent=`${idx+1} / ${V.length}`;
+  if(document.getElementById('autoSpeak').checked)
+    speak(it.word,document.getElementById('spkF'));
+}
+
+cardEl.addEventListener('click',e=>{
+  if(!e.target.closest('.spk'))cardEl.classList.toggle('flipped');
+});
+document.getElementById('spkF').addEventListener('click',e=>{e.stopPropagation();speak(V[order[idx]].word,e.currentTarget);});
+document.getElementById('spkB').addEventListener('click',e=>{e.stopPropagation();speak(V[order[idx]].word,e.currentTarget);});
+document.getElementById('nextBtn').addEventListener('click',()=>{idx=(idx+1)%V.length;renderCard();});
+document.getElementById('prevBtn').addEventListener('click',()=>{idx=(idx-1+V.length)%V.length;renderCard();});
+document.getElementById('shuffleBtn').addEventListener('click',()=>{
+  for(let i=order.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];
+  }
+  idx=0;renderCard();
+});
+renderCard();
+
+/* ===== Quiz ===== */
+let qOrder=[],qIdx=0,score=0,answered=false;
+function buildQuiz(){
+  qOrder=V.map((_,i)=>i);
+  for(let i=qOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qOrder[i],qOrder[j]]=[qOrder[j],qOrder[i]];}
+  qIdx=0;score=0;
+}
+function renderQuiz(){
+  answered=false;
+  const fb=document.getElementById('fb');fb.textContent='';fb.className='fb';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('qspk').style.display='none';
+  const it=V[qOrder[qIdx]];
+  document.getElementById('qprog').textContent=`問題 ${qIdx+1} / ${V.length}`;
+  let hint=`意味: ${it.meaning}`;
+  if(it.antonym) hint+=`\n${it.antonym}`;
+  document.getElementById('qmean').textContent=hint;
+  const escaped=it.word.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&');
+  const blanked=it.ex.replace(new RegExp(escaped,'i'),'<span class="blank">_____</span>');
+  document.getElementById('qsent').innerHTML=blanked;
+  const others=V.map(v=>v.word).filter(w=>w!==it.word);
+  for(let i=others.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[others[i],others[j]]=[others[j],others[i]];}
+  const choices=[...others.slice(0,3),it.word];
+  for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+  const optsEl=document.getElementById('opts');optsEl.innerHTML='';
+  choices.forEach(c=>{
+    const b=document.createElement('button');b.className='obtn';b.textContent=c;
+    b.addEventListener('click',()=>handleAns(b,c,it));optsEl.appendChild(b);
+  });
+}
+function handleAns(btn,choice,it){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.obtn').forEach(b=>{b.disabled=true;if(b.textContent===it.word)b.classList.add('ok');});
+  const ok=choice===it.word;
+  if(ok)score++;else btn.classList.add('ng');
+  const fb=document.getElementById('fb');
+  fb.textContent=ok?`✓ 正解！「${it.word}」= ${it.meaning}`:`✗ 不正解。正解は「${it.word}」= ${it.meaning}`;
+  fb.className='fb '+(ok?'ok':'ng');
+  document.getElementById('qsent').innerHTML=`${it.ex}<div class="qtr">${it.tr}</div>`;
+  const qs=document.getElementById('qspk');
+  qs.style.display='inline-block';qs.onclick=()=>speak(it.word,qs);
+  speak(it.word,qs);
+  document.getElementById('qnext').style.display='block';
+}
+document.getElementById('qnext').addEventListener('click',()=>{
+  qIdx++;if(qIdx>=V.length)showScore();else renderQuiz();
+});
+function showScore(){
+  document.getElementById('qcard').style.display='none';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('scoreBox').style.display='block';
+  document.getElementById('scoreNum').textContent=`${score} / ${V.length}`;
+  const r=score/V.length;
+  document.getElementById('scoreCmt').textContent=
+    r===1?'満点！完璧です 🎉':r>=.8?'よくできました！':r>=.5?'もう一度復習しましょう。':'カード学習で再確認しましょう。';
+}
+document.getElementById('restartBtn').addEventListener('click',()=>{
+  document.getElementById('qcard').style.display='block';
+  document.getElementById('scoreBox').style.display='none';
+  buildQuiz();renderQuiz();
+});
+buildQuiz();renderQuiz();
+
+/* ===== Tabs ===== */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.view+'View').classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
