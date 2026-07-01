@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英単語カード 2026-07-01</title>
+<style>
+:root{
+  --bg:#f5f3ef;--card:#fff;--ink:#1e1e1e;
+  --accent:#4a6fa5;--aclt:#c8d8f0;
+  --green:#3d7a55;--red:#a83232;--muted:#7a7972;--tag:#e8f0fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic",-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:22px 16px 60px}
+h1{font-size:18px;font-weight:800;margin:4px 0 16px;display:flex;align-items:center;gap:8px}
+.badge{font-size:11px;color:var(--accent);background:var(--tag);padding:3px 10px;border-radius:20px;font-weight:700}
+.tabs{display:flex;background:var(--card);padding:4px;border-radius:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:18px;gap:4px}
+.tab{border:none;background:transparent;padding:9px 20px;font-size:13.5px;
+  font-weight:700;color:var(--muted);border-radius:9px;cursor:pointer;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff}
+.view{width:100%;max-width:440px;display:none}
+.view.active{display:block}
+
+.auto-row{display:flex;align-items:center;justify-content:center;
+  gap:6px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.auto-row input{accent-color:var(--accent)}
+.prog{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:600}
+.card-wrap{perspective:1200px;width:100%;height:270px;margin-bottom:14px;cursor:pointer}
+.card{position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1)}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 22px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.front{background:var(--card);border:1px solid #ddd9d0}
+.back{background:var(--accent);color:#fff;transform:rotateY(180deg)}
+.spk{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;
+  border:none;background:rgba(0,0,0,.07);color:var(--accent);font-size:15px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.back .spk{background:rgba(255,255,255,.22);color:#fff}
+.spk.on{animation:pulse .6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.ptag{font-size:11px;background:var(--tag);color:var(--accent);
+  padding:3px 10px;border-radius:20px;margin-bottom:8px;font-weight:600}
+.back .ptag{background:rgba(255,255,255,.2);color:#fff}
+.word-big{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-bottom:7px;line-height:1.25}
+.antonym{font-size:11px;color:var(--muted);background:#f0ece4;
+  padding:3px 10px;border-radius:20px}
+.meaning-big{font-size:17px;font-weight:800;margin-bottom:8px;line-height:1.35}
+.ex-text{font-size:12.5px;opacity:.94;line-height:1.65;margin-bottom:5px}
+.tr-text{font-size:11.5px;opacity:.78;line-height:1.55}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px}
+.nav-row{display:flex;gap:10px;margin-bottom:10px}
+.nbtn{flex:1;padding:13px 0;border-radius:12px;border:none;font-size:14px;
+  font-weight:700;cursor:pointer;background:var(--card);color:var(--ink);
+  box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.nbtn.p{background:var(--accent);color:#fff}
+.sbtn{width:100%;padding:10px 0;border-radius:12px;border:1px solid var(--aclt);
+  background:transparent;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer}
+
+.qcard{background:var(--card);border-radius:16px;padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:12px}
+.qprog{font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:600}
+.qmean{font-size:13px;font-weight:700;color:var(--accent);background:var(--tag);
+  padding:6px 12px;border-radius:10px;margin-bottom:10px;line-height:1.6}
+.qsent{font-size:15px;line-height:1.8;margin-bottom:13px}
+.blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--accent);
+  font-weight:700;color:var(--accent);text-align:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.obtn{padding:10px 6px;border-radius:10px;border:1.5px solid #ddd9d0;
+  background:#fffdfa;font-size:12px;cursor:pointer;color:var(--ink);
+  font-family:inherit;line-height:1.3}
+.obtn.ok{background:var(--green);border-color:var(--green);color:#fff}
+.obtn.ng{background:var(--red);border-color:var(--red);color:#fff}
+.obtn:disabled{cursor:default}
+.fb{margin-top:11px;font-size:13px;font-weight:700;min-height:18px}
+.fb.ok{color:var(--green)}.fb.ng{color:var(--red)}
+.qtr{font-size:12px;color:var(--muted);margin-top:6px}
+.qspk{margin-top:9px;padding:7px 14px;border-radius:10px;border:none;
+  background:var(--aclt);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;display:none}
+.score-box{text-align:center;background:var(--card);border-radius:18px;
+  padding:34px 20px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.score-big{font-size:50px;font-weight:900;color:var(--accent);letter-spacing:-.02em;margin:10px 0}
+.rbtn{margin-top:20px;padding:12px 30px;border-radius:12px;border:none;
+  background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<h1>📘 2026-07-01 <span class="badge">13語</span></h1>
+
+<div class="tabs">
+  <button class="tab active" data-view="flash">カード学習</button>
+  <button class="tab" data-view="quiz">穴埋めテスト</button>
+</div>
+
+<div class="view active" id="flashView">
+  <label class="auto-row">
+    <input type="checkbox" id="autoSpeak"> 自動発音
+  </label>
+  <div class="prog" id="prog">1 / 13</div>
+  <div class="card-wrap">
+    <div class="card" id="card">
+      <div class="face front">
+        <button class="spk" id="spkF">🔊</button>
+        <div class="ptag"     id="fPos"></div>
+        <div class="word-big" id="fWord"></div>
+        <div class="antonym"  id="fAnt"></div>
+      </div>
+      <div class="face back">
+        <button class="spk" id="spkB">🔊</button>
+        <div class="ptag"        id="bPos"></div>
+        <div class="meaning-big" id="bMean"></div>
+        <div class="ex-text"     id="bEx"></div>
+        <div class="tr-text"     id="bTr"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">タップして意味を表示 / 🔊で発音</div>
+  <div class="nav-row">
+    <button class="nbtn"   id="prevBtn">← 前へ</button>
+    <button class="nbtn p" id="nextBtn">次へ →</button>
+  </div>
+  <button class="sbtn" id="shuffleBtn">🔀 シャッフル</button>
+</div>
+
+<div class="view" id="quizView">
+  <div class="qcard" id="qcard">
+    <div class="qprog" id="qprog"></div>
+    <div class="qmean" id="qmean"></div>
+    <div class="qsent" id="qsent"></div>
+    <div class="opts"  id="opts"></div>
+    <div class="fb"    id="fb"></div>
+    <button class="qspk" id="qspk">🔊 発音を聞く</button>
+  </div>
+  <button class="nbtn p" id="qnext" style="width:100%;display:none">次の問題 →</button>
+  <div class="score-box" id="scoreBox" style="display:none">
+    <div style="font-size:15px;color:var(--muted)">テスト結果</div>
+    <div class="score-big" id="scoreNum"></div>
+    <div style="font-size:13px;color:var(--muted)" id="scoreCmt"></div>
+    <button class="rbtn" id="restartBtn">もう一度挑戦</button>
+  </div>
+</div>
+
+<script>
+const V = [
+  {
+    word:"freebirth", pos:"名詞", meaning:"医療従事者の立ち会いなしで出産すること",
+    antonym:"対語：hospital birth（病院での出産）",
+    ex:"She chose a freebirth instead of delivering in a hospital.",
+    tr:"彼女は病院での出産の代わりに、医療従事者なしでの自宅出産を選んだ。"
+  },
+  {
+    word:"postpartum haemorrhage", pos:"名詞", meaning:"産後の大量出血",
+    antonym:"対語：recovery（回復）",
+    ex:"Doctors treated the woman for postpartum haemorrhage immediately after delivery.",
+    tr:"医師たちは分娩直後に産後大量出血のため女性を治療した。"
+  },
+  {
+    word:"scrutiny", pos:"名詞", meaning:"厳しい調査、精査",
+    antonym:"対語：neglect（放置）",
+    ex:"The company came under scrutiny after the accident.",
+    tr:"その会社は事故の後、厳しい調査を受けることになった。"
+  },
+  {
+    word:"unlicensed", pos:"形容詞", meaning:"無資格の、免許を持たない",
+    antonym:"対語：licensed（資格を持つ）",
+    ex:"It is dangerous to receive medical advice from an unlicensed person.",
+    tr:"無資格者から医療アドバイスを受けることは危険だ。"
+  },
+  {
+    word:"inquest", pos:"名詞", meaning:"（死因などを調べる）検死審問、司法調査",
+    antonym:"対語：conclusion（結論）",
+    ex:"The inquest will determine how the patient died.",
+    tr:"その検死審問で患者がどのように亡くなったかが明らかにされる。"
+  },
+  {
+    word:"beneficiary", pos:"名詞", meaning:"利益・恩恵を受ける人・国",
+    antonym:"対語：victim（被害者）",
+    ex:"China became a major beneficiary of the crisis.",
+    tr:"中国はその危機の大きな受益者となった。"
+  },
+  {
+    word:"resilient", pos:"形容詞", meaning:"回復力がある、打たれ強い",
+    antonym:"対語：vulnerable（脆弱な）",
+    ex:"The economy remained resilient despite rising oil prices.",
+    tr:"石油価格の上昇にもかかわらず、その経済は底堅さを保った。"
+  },
+  {
+    word:"cushion", pos:"動詞", meaning:"（衝撃・影響）を和らげる",
+    antonym:"対語：worsen（悪化させる）",
+    ex:"Strategic reserves cushioned the impact of the crisis.",
+    tr:"戦略備蓄が危機の影響を和らげた。"
+  },
+  {
+    word:"volatile", pos:"形容詞", meaning:"不安定な、変動しやすい",
+    antonym:"対語：stable（安定した）",
+    ex:"Oil prices remained volatile throughout the conflict.",
+    tr:"紛争の間、石油価格は不安定なままだった。"
+  },
+  {
+    word:"portray", pos:"動詞", meaning:"〜を描く、表現する、印象づける",
+    antonym:"対語：conceal（隠す）",
+    ex:"China portrayed itself as a force for stability.",
+    tr:"中国は自らを安定をもたらす存在として描いた。"
+  },
+  {
+    word:"vulnerability", pos:"名詞", meaning:"脆弱性、弱点",
+    antonym:"対語：strength（強さ）",
+    ex:"The country reduced its energy vulnerability.",
+    tr:"その国はエネルギー面での脆弱性を低下させた。"
+  },
+  {
+    word:"withstand", pos:"動詞", meaning:"〜に耐える、持ちこたえる",
+    antonym:"対語：succumb to（〜に屈する）",
+    ex:"The economy withstood the energy shock.",
+    tr:"その経済はエネルギーショックに耐えた。"
+  },
+  {
+    word:"heightened", pos:"形容詞", meaning:"高まった、激化した",
+    antonym:"対語：reduced（低下した）",
+    ex:"The world faced heightened geopolitical tensions.",
+    tr:"世界は高まる地政学的緊張に直面した。"
+  },
+];
+
+/* ===== Speech ===== */
+let voices=[];
+function loadV(){if(window.speechSynthesis)voices=window.speechSynthesis.getVoices();}
+if('speechSynthesis'in window){loadV();window.speechSynthesis.onvoiceschanged=loadV;}
+function speak(text,btn){
+  if(!('speechSynthesis'in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=0.88;
+  const v=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang?.startsWith('en'));
+  if(v)u.voice=v;
+  if(btn){btn.classList.add('on');u.onend=u.onerror=()=>btn.classList.remove('on');}
+  window.speechSynthesis.speak(u);
+}
+
+/* ===== Flashcard ===== */
+let order=V.map((_,i)=>i),idx=0;
+const cardEl=document.getElementById('card');
+
+function renderCard(){
+  const it=V[order[idx]];
+  cardEl.classList.remove('flipped');
+  document.getElementById('fPos').textContent=it.pos;
+  document.getElementById('fWord').textContent=it.word;
+  const antEl=document.getElementById('fAnt');
+  antEl.textContent=it.antonym;
+  antEl.style.display=it.antonym?'inline-block':'none';
+  document.getElementById('bPos').textContent=it.pos;
+  document.getElementById('bMean').textContent=it.meaning;
+  document.getElementById('bEx').textContent=it.ex;
+  document.getElementById('bTr').textContent=it.tr;
+  document.getElementById('prog').textContent=`${idx+1} / ${V.length}`;
+  if(document.getElementById('autoSpeak').checked)
+    speak(it.word,document.getElementById('spkF'));
+}
+
+cardEl.addEventListener('click',e=>{
+  if(!e.target.closest('.spk'))cardEl.classList.toggle('flipped');
+});
+document.getElementById('spkF').addEventListener('click',e=>{e.stopPropagation();speak(V[order[idx]].word,e.currentTarget);});
+document.getElementById('spkB').addEventListener('click',e=>{e.stopPropagation();speak(V[order[idx]].word,e.currentTarget);});
+document.getElementById('nextBtn').addEventListener('click',()=>{idx=(idx+1)%V.length;renderCard();});
+document.getElementById('prevBtn').addEventListener('click',()=>{idx=(idx-1+V.length)%V.length;renderCard();});
+document.getElementById('shuffleBtn').addEventListener('click',()=>{
+  for(let i=order.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];
+  }
+  idx=0;renderCard();
+});
+renderCard();
+
+/* ===== Quiz ===== */
+let qOrder=[],qIdx=0,score=0,answered=false;
+function buildQuiz(){
+  qOrder=V.map((_,i)=>i);
+  for(let i=qOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qOrder[i],qOrder[j]]=[qOrder[j],qOrder[i]];}
+  qIdx=0;score=0;
+}
+function renderQuiz(){
+  answered=false;
+  const fb=document.getElementById('fb');fb.textContent='';fb.className='fb';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('qspk').style.display='none';
+  const it=V[qOrder[qIdx]];
+  document.getElementById('qprog').textContent=`問題 ${qIdx+1} / ${V.length}`;
+  let hint=`意味: ${it.meaning}`;
+  if(it.antonym) hint+=`　／　${it.antonym}`;
+  document.getElementById('qmean').textContent=hint;
+  const escaped=it.word.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&');
+  const blanked=it.ex.replace(new RegExp(escaped,'i'),'<span class="blank">_____</span>');
+  document.getElementById('qsent').innerHTML=blanked;
+  const others=V.map(v=>v.word).filter(w=>w!==it.word);
+  for(let i=others.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[others[i],others[j]]=[others[j],others[i]];}
+  const choices=[...others.slice(0,3),it.word];
+  for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+  const optsEl=document.getElementById('opts');optsEl.innerHTML='';
+  choices.forEach(c=>{
+    const b=document.createElement('button');b.className='obtn';b.textContent=c;
+    b.addEventListener('click',()=>handleAns(b,c,it));optsEl.appendChild(b);
+  });
+}
+function handleAns(btn,choice,it){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.obtn').forEach(b=>{b.disabled=true;if(b.textContent===it.word)b.classList.add('ok');});
+  const ok=choice===it.word;
+  if(ok)score++;else btn.classList.add('ng');
+  const fb=document.getElementById('fb');
+  fb.textContent=ok?`✓ 正解！「${it.word}」= ${it.meaning}`:`✗ 不正解。正解は「${it.word}」= ${it.meaning}`;
+  fb.className='fb '+(ok?'ok':'ng');
+  document.getElementById('qsent').innerHTML=`${it.ex}<div class="qtr">${it.tr}</div>`;
+  const qs=document.getElementById('qspk');
+  qs.style.display='inline-block';qs.onclick=()=>speak(it.word,qs);
+  speak(it.word,qs);
+  document.getElementById('qnext').style.display='block';
+}
+document.getElementById('qnext').addEventListener('click',()=>{
+  qIdx++;if(qIdx>=V.length)showScore();else renderQuiz();
+});
+function showScore(){
+  document.getElementById('qcard').style.display='none';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('scoreBox').style.display='block';
+  document.getElementById('scoreNum').textContent=`${score} / ${V.length}`;
+  const r=score/V.length;
+  document.getElementById('scoreCmt').textContent=
+    r===1?'満点！完璧です 🎉':r>=.8?'よくできました！':r>=.5?'もう一度復習しましょう。':'カード学習で再確認しましょう。';
+}
+document.getElementById('restartBtn').addEventListener('click',()=>{
+  document.getElementById('qcard').style.display='block';
+  document.getElementById('scoreBox').style.display='none';
+  buildQuiz();renderQuiz();
+});
+buildQuiz();renderQuiz();
+
+/* ===== Tabs ===== */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.view+'View').classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
